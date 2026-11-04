@@ -1,37 +1,75 @@
-import { StyleSheet, Text, View } from "react-native";
+
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+
 import Display from "../components/Display";
+import Historial from "../components/Historial";
 import Rejilla from "../components/Rejilla";
 import useCalculator from "../hooks/useCalculator";
 
 export default function Index() {
   const {
     display,
+    resultado,
+    operacionMostrada,
+    historial,
     escribirNumero,
     escribirOperador,
+    seleccionarFuncion,
     limpiar,
     borrar,
     cambiarSigno,
     calcular,
+    limpiarHistorial,
   } = useCalculator();
 
   return (
     <View style={styles.container}>
-      <View style={styles.encabezado}>
-        <Text style={styles.titulo}>Calculadora</Text>
-      </View>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.contenido}
+      >
+        <View style={styles.encabezado}>
+          <View>
+            <Text style={styles.titulo}>GREEN CALC</Text>
+            <Text style={styles.subtitulo}>
+              CALCULADORA CIENTÍFICA
+            </Text>
+          </View>
 
-      <Display display={display} />
+          <Text style={styles.icono}></Text>
+        </View>
 
-      <Text style={styles.textoBotones}>OPERACIONES</Text>
+        <Display
+          display={display}
+          resultado={resultado}
+          operacionMostrada={operacionMostrada}
+          funcionPendiente={null}
+        />
 
-      <Rejilla
-        escribirNumero={escribirNumero}
-        escribirOperador={escribirOperador}
-        limpiar={limpiar}
-        borrar={borrar}
-        cambiarSigno={cambiarSigno}
-        calcular={calcular}
-      />
+        <Rejilla
+          escribirNumero={escribirNumero}
+          escribirOperador={escribirOperador}
+          seleccionarFuncion={seleccionarFuncion}
+          limpiar={limpiar}
+          borrar={borrar}
+          cambiarSigno={cambiarSigno}
+          calcular={calcular}
+        />
+
+        <Historial
+          historial={historial}
+          limpiarHistorial={limpiarHistorial}
+        />
+
+        <Text style={styles.pie}>
+          GREEN CALC • SCIENTIFIC EDITION
+        </Text>
+      </ScrollView>
     </View>
   );
 }
@@ -40,26 +78,39 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#080D09",
+  },
+  contenido: {
     paddingHorizontal: 20,
     paddingTop: 60,
+    paddingBottom: 30,
   },
   encabezado: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 30,
-    gap: 12,
+    justifyContent: "space-between",
+    marginBottom: 25,
   },
   titulo: {
     fontSize: 27,
     fontWeight: "bold",
     color: "#4ADE80",
+    letterSpacing: 1,
   },
-  textoBotones: {
-    fontSize: 12,
-    fontWeight: "bold",
+  subtitulo: {
+    fontSize: 10,
     color: "#86C99B",
-    marginTop: 15,
-    marginBottom: 15,
+    letterSpacing: 2,
+    marginTop: 5,
+  },
+  icono: {
+    fontSize: 30,
+    color: "#22C55E",
+  },
+  pie: {
+    color: "#416B4D",
+    textAlign: "center",
+    fontSize: 10,
+    marginTop: 25,
     letterSpacing: 2,
   },
 });
