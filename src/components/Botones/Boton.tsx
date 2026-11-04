@@ -1,12 +1,17 @@
+
 import {
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
+  Vibration,
 } from "react-native";
+
+import * as Haptics from "expo-haptics";
 
 interface BotonProps {
   texto: string;
-  color?: "verde" | "gris" | "blanco";
+  color?: "azul" | "gris" | "blanco" | "verde";
   ancho?: number;
   onPress?: () => void;
 }
@@ -17,16 +22,41 @@ const Boton = ({
   ancho = 60,
   onPress,
 }: BotonProps) => {
+
+  const manejarPresion = async () => {
+    try {
+      if (Platform.OS === "android") {
+        Vibration.vibrate(50);
+        await Haptics.performAndroidHapticsAsync(
+          Haptics.AndroidHaptics.Keyboard_Tap
+        );
+      } else if (Platform.OS === "ios") {
+        await Haptics.impactAsync(
+          Haptics.ImpactFeedbackStyle.Medium
+        );
+      }
+    } catch (error) {
+      console.log("Error de vibración:", error);
+    }
+
+    onPress?.();
+  };
+
   return (
     <TouchableOpacity
-      style={[styles.boton, styles[color], { width: ancho }]}
-      onPress={onPress}
-      activeOpacity={0.7}
+      activeOpacity={0.6}
+      style={[
+        styles.boton,
+        styles[color],
+        { width: ancho },
+      ]}
+      onPress={manejarPresion}
     >
       <Text
         style={[
           styles.texto,
-          color === "verde" && styles.textoBlanco,
+          (color === "azul" || color === "verde") &&
+            styles.textoBlanco,
         ]}
       >
         {texto}
@@ -43,19 +73,18 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 1.5,
-    shadowColor: "#22C55E",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 5,
-    elevation: 4,
+    borderWidth: 1,
+  },
+  azul: {
+    backgroundColor: "#3478F6",
+    borderColor: "#3478F6",
   },
   verde: {
-    backgroundColor: "#14532D",
+    backgroundColor: "#166534",
     borderColor: "#22C55E",
   },
   gris: {
-    backgroundColor: "#17251B",
+    backgroundColor: "#193322",
     borderColor: "#285C39",
   },
   blanco: {
@@ -63,7 +92,7 @@ const styles = StyleSheet.create({
     borderColor: "#285C39",
   },
   texto: {
-    fontSize: 25,
+    fontSize: 22,
     color: "#A7F3B9",
     fontWeight: "600",
   },
