@@ -8,26 +8,65 @@ export interface HistorialItem {
 
 type Funcion = "√" | "sin" | "cos" | "tan" | "log" | "ln" | "x²";
 
-// CORREGIR ERRORES DECIMALES TRIGONOMÉTRICOS
+// CONFIGURACIÓN GENERAL
+const CONFIG_CALCULADORA = {
+  maxHistorial: 50,
+  precision: 10,
+  toleranciaDecimal: 1e-10,
+  gradosARadianes: Math.PI / 180,
+};
+
+// MENSAJES DE ERROR
+const MENSAJES = {
+  expresionInvalida: "Expresión inválida",
+  divisionPorCero: "División por cero",
+  parentesisIncorrectos: "Paréntesis incorrectos",
+  faltaParentesis: "Falta paréntesis",
+  faltaCerrarParentesis: "Falta cerrar paréntesis",
+  raizInvalida: "Raíz inválida",
+  logaritmoInvalido: "Logaritmo inválido",
+  numeroInvalido: "Número inválido",
+  operacionInvalida: "Operación inválida",
+};
+
+// LIMPIAR ERRORES DECIMALES
 const limpiarDecimal = (numero: number): number => {
-  if (Math.abs(numero) < 1e-10) return 0;
+  if (
+    Math.abs(numero) <
+    CONFIG_CALCULADORA.toleranciaDecimal
+  ) {
+    return 0;
+  }
+
   return numero;
 };
 
-// CONVERTIR A GRADOS Y LIMPIAR DECIMALES
+// FUNCIONES TRIGONOMÉTRICAS EN GRADOS
 const seno = (numero: number): number => {
-  return limpiarDecimal(Math.sin(numero * Math.PI / 180));
+  return limpiarDecimal(
+    Math.sin(
+      numero * CONFIG_CALCULADORA.gradosARadianes
+    )
+  );
 };
 
 const coseno = (numero: number): number => {
-  return limpiarDecimal(Math.cos(numero * Math.PI / 180));
+  return limpiarDecimal(
+    Math.cos(
+      numero * CONFIG_CALCULADORA.gradosARadianes
+    )
+  );
 };
 
 const tangente = (numero: number): number => {
-  const radianes = numero * Math.PI / 180;
+  const radianes =
+    numero * CONFIG_CALCULADORA.gradosARadianes;
 
-  if (Math.abs(Math.cos(radianes)) < 1e-10) {
-    throw new Error("Tangente indefinida");
+  if (
+    Math.abs(Math.cos(radianes)) <
+    CONFIG_CALCULADORA.toleranciaDecimal
+  ) {
+    throw new Error(MENSAJES.divisionPorCero);
   }
 
   return limpiarDecimal(Math.tan(radianes));
@@ -46,7 +85,7 @@ const resolver = (expresion: string): number => {
 
   while ((coincidencia = patron.exec(entrada)) !== null) {
     if (coincidencia.index !== posicion) {
-      throw new Error("Expresión inválida");
+      throw new Error(MENSAJES.expresionInvalida);
     }
 
     partes.push(coincidencia[0]);
@@ -54,7 +93,7 @@ const resolver = (expresion: string): number => {
   }
 
   if (posicion !== entrada.length || partes.length === 0) {
-    throw new Error("Expresión inválida");
+    throw new Error(MENSAJES.expresionInvalida);
   }
 
   let i = 0;
@@ -96,7 +135,7 @@ const resolver = (expresion: string): number => {
 
       if (operador === "÷") {
         if (siguiente === 0) {
-          throw new Error("División por cero");
+          throw new Error(MENSAJES.divisionPorCero);
         }
 
         valor /= siguiente;
@@ -118,7 +157,7 @@ const resolver = (expresion: string): number => {
     return base;
   };
 
-  // SIGNOS
+  // SIGNOS POSITIVO Y NEGATIVO
   const unario = (): number => {
     if (partes[i] === "-") {
       i++;
@@ -133,7 +172,7 @@ const resolver = (expresion: string): number => {
     return principal();
   };
 
-  // NÚMEROS Y FUNCIONES
+  // NÚMEROS Y FUNCIONES CIENTÍFICAS
   const principal = (): number => {
     const token = partes[i];
 
@@ -144,7 +183,7 @@ const resolver = (expresion: string): number => {
       const valor = expresionMatematica();
 
       if (partes[i] !== ")") {
-        throw new Error("Paréntesis incorrectos");
+        throw new Error(MENSAJES.parentesisIncorrectos);
       }
 
       i++;
@@ -159,7 +198,7 @@ const resolver = (expresion: string): number => {
       i++;
 
       if (partes[i] !== "(") {
-        throw new Error("Falta paréntesis");
+        throw new Error(MENSAJES.faltaParentesis);
       }
 
       i++;
@@ -167,7 +206,7 @@ const resolver = (expresion: string): number => {
       const numero = expresionMatematica();
 
       if (partes[i] !== ")") {
-        throw new Error("Falta cerrar paréntesis");
+        throw new Error(MENSAJES.faltaCerrarParentesis);
       }
 
       i++;
@@ -175,7 +214,7 @@ const resolver = (expresion: string): number => {
       switch (token) {
         case "√":
           if (numero < 0) {
-            throw new Error("Raíz inválida");
+            throw new Error(MENSAJES.raizInvalida);
           }
 
           return Math.sqrt(numero);
@@ -191,14 +230,14 @@ const resolver = (expresion: string): number => {
 
         case "log":
           if (numero <= 0) {
-            throw new Error("Logaritmo inválido");
+            throw new Error(MENSAJES.logaritmoInvalido);
           }
 
           return Math.log10(numero);
 
         case "ln":
           if (numero <= 0) {
-            throw new Error("Logaritmo inválido");
+            throw new Error(MENSAJES.logaritmoInvalido);
           }
 
           return Math.log(numero);
@@ -209,7 +248,7 @@ const resolver = (expresion: string): number => {
     const valor = Number(token);
 
     if (token === undefined || !Number.isFinite(valor)) {
-      throw new Error("Número inválido");
+      throw new Error(MENSAJES.numeroInvalido);
     }
 
     i++;
@@ -220,7 +259,7 @@ const resolver = (expresion: string): number => {
   const resultado = expresionMatematica();
 
   if (i !== partes.length || !Number.isFinite(resultado)) {
-    throw new Error("Operación inválida");
+    throw new Error(MENSAJES.operacionInvalida);
   }
 
   return limpiarDecimal(resultado);
@@ -234,7 +273,11 @@ const formato = (numero: number): string => {
 
   const limpio = limpiarDecimal(numero);
 
-  return String(Number(limpio.toPrecision(10)));
+  return String(
+    Number(
+      limpio.toPrecision(CONFIG_CALCULADORA.precision)
+    )
+  );
 };
 
 // HOOK PRINCIPAL
@@ -313,14 +356,14 @@ const useCalculator = () => {
     });
   };
 
-  // LIMPIAR
+  // LIMPIAR PANTALLA
   const limpiar = () => {
     setDisplay("0");
     setResultado(null);
     setOperacionMostrada("");
   };
 
-  // BORRAR
+  // BORRAR ÚLTIMO CARÁCTER
   const borrar = () => {
     setResultado(null);
     setOperacionMostrada("");
@@ -373,14 +416,15 @@ const useCalculator = () => {
       setResultado(nuevoResultado);
 
       // GUARDAR HISTORIAL
-      setHistorial((prev) => [
-        {
-          expresion: expresionFinal,
-          resultado: nuevoResultado,
-        },
-        ...prev,
-      ].slice(0, 50));
-
+      setHistorial((prev) =>
+        [
+          {
+            expresion: expresionFinal,
+            resultado: nuevoResultado,
+          },
+          ...prev,
+        ].slice(0, CONFIG_CALCULADORA.maxHistorial)
+      );
     } catch {
       setResultado("Error");
       setOperacionMostrada(display);
