@@ -29,7 +29,7 @@ const MENSAJES = {
   operacionInvalida: "Operación inválida",
 };
 
-// LIMPIAR ERRORES DECIMALES
+
 const limpiarDecimal = (numero: number): number => {
   if (
     Math.abs(numero) <
@@ -41,7 +41,7 @@ const limpiarDecimal = (numero: number): number => {
   return numero;
 };
 
-// FUNCIONES TRIGONOMÉTRICAS EN GRADOS
+
 const seno = (numero: number): number => {
   return limpiarDecimal(
     Math.sin(
@@ -72,7 +72,6 @@ const tangente = (numero: number): number => {
   return limpiarDecimal(Math.tan(radianes));
 };
 
-// ANALIZADOR MATEMÁTICO
 const resolver = (expresion: string): number => {
   const entrada = expresion.replace(/\s/g, "");
   const partes: string[] = [];
@@ -98,7 +97,7 @@ const resolver = (expresion: string): number => {
 
   let i = 0;
 
-  // SUMAS Y RESTAS
+
   const expresionMatematica = (): number => {
     let valor = termino();
 
@@ -115,7 +114,6 @@ const resolver = (expresion: string): number => {
     return valor;
   };
 
-  // MULTIPLICACIÓN, DIVISIÓN Y PORCENTAJE
   const termino = (): number => {
     let valor = potencia();
 
@@ -145,7 +143,7 @@ const resolver = (expresion: string): number => {
     return valor;
   };
 
-  // POTENCIAS
+
   const potencia = (): number => {
     const base = unario();
 
@@ -157,7 +155,7 @@ const resolver = (expresion: string): number => {
     return base;
   };
 
-  // SIGNOS POSITIVO Y NEGATIVO
+
   const unario = (): number => {
     if (partes[i] === "-") {
       i++;
@@ -172,11 +170,10 @@ const resolver = (expresion: string): number => {
     return principal();
   };
 
-  // NÚMEROS Y FUNCIONES CIENTÍFICAS
+
   const principal = (): number => {
     const token = partes[i];
 
-    // PARÉNTESIS
     if (token === "(") {
       i++;
 
@@ -190,7 +187,7 @@ const resolver = (expresion: string): number => {
       return valor;
     }
 
-    // FUNCIONES CIENTÍFICAS
+
     if (
       token === "√" ||
       ["sin", "cos", "tan", "log", "ln"].includes(token)
@@ -244,7 +241,7 @@ const resolver = (expresion: string): number => {
       }
     }
 
-    // NÚMEROS
+  
     const valor = Number(token);
 
     if (token === undefined || !Number.isFinite(valor)) {
@@ -265,7 +262,7 @@ const resolver = (expresion: string): number => {
   return limpiarDecimal(resultado);
 };
 
-// FORMATO DEL RESULTADO
+
 const formato = (numero: number): string => {
   if (!Number.isFinite(numero)) {
     return "Error";
@@ -280,7 +277,7 @@ const formato = (numero: number): string => {
   );
 };
 
-// HOOK PRINCIPAL
+
 const useCalculator = () => {
   const [display, setDisplay] = useState("0");
 
@@ -293,7 +290,7 @@ const useCalculator = () => {
   const [historial, setHistorial] =
     useState<HistorialItem[]>([]);
 
-  // ESCRIBIR NÚMEROS
+
   const escribirNumero = (numero: string) => {
     if (resultado !== null) {
       setDisplay(numero === "." ? "0." : numero);
@@ -319,7 +316,7 @@ const useCalculator = () => {
     });
   };
 
-  // ESCRIBIR OPERADORES
+  
   const escribirOperador = (operador: string) => {
     if (resultado !== null) {
       setDisplay(resultado + operador);
@@ -339,7 +336,6 @@ const useCalculator = () => {
     });
   };
 
-  // FUNCIONES CIENTÍFICAS
   const seleccionarFuncion = (funcion: Funcion) => {
     setResultado(null);
     setOperacionMostrada("");
@@ -356,14 +352,12 @@ const useCalculator = () => {
     });
   };
 
-  // LIMPIAR PANTALLA
   const limpiar = () => {
     setDisplay("0");
     setResultado(null);
     setOperacionMostrada("");
   };
 
-  // BORRAR ÚLTIMO CARÁCTER
   const borrar = () => {
     setResultado(null);
     setOperacionMostrada("");
@@ -377,7 +371,6 @@ const useCalculator = () => {
     });
   };
 
-  // CAMBIAR SIGNO
   const cambiarSigno = () => {
     if (resultado !== null) {
       setDisplay(formato(-Number(resultado)));
@@ -393,7 +386,6 @@ const useCalculator = () => {
     );
   };
 
-  // CALCULAR
   const calcular = () => {
     try {
       const expresion = display;
@@ -415,7 +407,6 @@ const useCalculator = () => {
       setOperacionMostrada(expresionFinal);
       setResultado(nuevoResultado);
 
-      // GUARDAR HISTORIAL
       setHistorial((prev) =>
         [
           {
@@ -431,7 +422,6 @@ const useCalculator = () => {
     }
   };
 
-  // LIMPIAR HISTORIAL
   const limpiarHistorial = () => {
     setHistorial([]);
   };
