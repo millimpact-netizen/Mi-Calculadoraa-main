@@ -11,6 +11,25 @@ import Historial from "../components/Historial";
 import Rejilla from "../components/Rejilla";
 import useCalculator from "../hooks/useCalculator";
 
+// CONFIGURACIÓN DE LA PANTALLA
+const CONFIG_PANTALLA = {
+  fondo: "#080D09",
+  titulo: "#4ADE80",
+  subtitulo: "#86C99B",
+  icono: "#22C55E",
+  pie: "#416B4D",
+
+  nombre: "GREEN CALC",
+  descripcion: "CALCULADORA CIENTÍFICA",
+  textoPie: "GREEN CALC • SCIENTIFIC EDITION",
+
+  tamanoTitulo: 27,
+  tamanoSubtitulo: 10,
+  espacioHorizontal: 20,
+  espacioSuperior: 60,
+  espacioInferior: 30,
+};
+
 export default function Index() {
   const {
     display,
@@ -35,9 +54,12 @@ export default function Index() {
       >
         <View style={styles.encabezado}>
           <View>
-            <Text style={styles.titulo}>GREEN CALC</Text>
+            <Text style={styles.titulo}>
+              {CONFIG_PANTALLA.nombre}
+            </Text>
+
             <Text style={styles.subtitulo}>
-              CALCULADORA CIENTÍFICA
+              {CONFIG_PANTALLA.descripcion}
             </Text>
           </View>
 
@@ -67,7 +89,7 @@ export default function Index() {
         />
 
         <Text style={styles.pie}>
-          GREEN CALC • SCIENTIFIC EDITION
+          {CONFIG_PANTALLA.textoPie}
         </Text>
       </ScrollView>
     </View>
@@ -77,12 +99,12 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#080D09",
+    backgroundColor: CONFIG_PANTALLA.fondo,
   },
   contenido: {
-    paddingHorizontal: 20,
-    paddingTop: 60,
-    paddingBottom: 30,
+    paddingHorizontal: CONFIG_PANTALLA.espacioHorizontal,
+    paddingTop: CONFIG_PANTALLA.espacioSuperior,
+    paddingBottom: CONFIG_PANTALLA.espacioInferior,
   },
   encabezado: {
     flexDirection: "row",
@@ -91,23 +113,23 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   titulo: {
-    fontSize: 27,
+    fontSize: CONFIG_PANTALLA.tamanoTitulo,
     fontWeight: "bold",
-    color: "#4ADE80",
+    color: CONFIG_PANTALLA.titulo,
     letterSpacing: 1,
   },
   subtitulo: {
-    fontSize: 10,
-    color: "#86C99B",
+    fontSize: CONFIG_PANTALLA.tamanoSubtitulo,
+    color: CONFIG_PANTALLA.subtitulo,
     letterSpacing: 2,
     marginTop: 5,
   },
   icono: {
     fontSize: 30,
-    color: "#22C55E",
+    color: CONFIG_PANTALLA.icono,
   },
   pie: {
-    color: "#416B4D",
+    color: CONFIG_PANTALLA.pie,
     textAlign: "center",
     fontSize: 10,
     marginTop: 25,
